@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.streamchat.app-mergeDebugResources-64:/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "/Users/MAC/.gradle/caches/8.11.1/transforms/ea2df8fa696b8b028a1b6e1948ac63bc/transformed/appcompat-1.6.1/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}
