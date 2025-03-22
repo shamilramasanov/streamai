@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.streamchat.data.remote.YouTubeApiService;
 import com.streamchat.di.AppModule_ProvideYouTubeApiServiceFactory;
 import com.streamchat.presentation.viewmodels.ChatViewModel;
@@ -364,7 +363,6 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
 
     @Override
     public void injectMainActivity(MainActivity arg0) {
-      injectMainActivity2(arg0);
     }
 
     @Override
@@ -390,12 +388,6 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
     @Override
     public ViewComponentBuilder viewComponentBuilder() {
       return new ViewCBuilder(singletonCImpl, activityRetainedCImpl, activityCImpl);
-    }
-
-    @CanIgnoreReturnValue
-    private MainActivity injectMainActivity2(MainActivity instance) {
-      MainActivity_MembersInjector.injectYouTubeApiService(instance, singletonCImpl.provideYouTubeApiServiceProvider.get());
-      return instance;
     }
   }
 

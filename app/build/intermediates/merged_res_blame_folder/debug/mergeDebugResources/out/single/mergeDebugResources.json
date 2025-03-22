@@ -1,5 +1,9 @@
 [
     {
+        "merged": "com.streamchat.app-debug-66:/drawable_ic_stream.xml.flat",
+        "source": "com.streamchat.app-main-68:/drawable/ic_stream.xml"
+    },
+    {
         "merged": "com.streamchat.app-debug-66:/xml_data_extraction_rules.xml.flat",
         "source": "com.streamchat.app-main-68:/xml/data_extraction_rules.xml"
     },

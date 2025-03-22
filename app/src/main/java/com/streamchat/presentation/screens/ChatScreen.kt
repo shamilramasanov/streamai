@@ -1,6 +1,8 @@
 package com.streamchat.presentation.screens
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,14 +10,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -30,22 +34,28 @@ import javax.inject.Inject
 @Composable
 fun ChatScreen(
     streamUrl: String,
-    viewModel: ChatViewModel = hiltViewModel()
+    viewModel: ChatViewModel,
+    onNavigateBack: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Всі", "Питання", "Подяки", "Негатив", "Особисті")
     val scope = rememberCoroutineScope()
-    val listState = rememberLazyListState()
-    var error by remember { mutableStateOf<String?>(null) }
+    val messages by viewModel.allMessages.collectAsState()
+    val questions by viewModel.questions.collectAsState()
+    val gratitude by viewModel.gratitude.collectAsState()
+    val personalQuestions by viewModel.personalQuestions.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+    val chatMood by viewModel.chatMood.collectAsState()
     
-    val allMessages by viewModel.allMessages.collectAsState(initial = emptyList())
-    val questions by viewModel.questions.collectAsState(initial = emptyList())
-    val gratitude by viewModel.gratitude.collectAsState(initial = emptyList())
-    val negative by viewModel.negative.collectAsState(initial = emptyList())
-    val personalQuestions by viewModel.personalQuestions.collectAsState(initial = emptyList())
-    val chatMood by viewModel.chatMood.collectAsState(initial = 0.0f)
-    val isLoading by viewModel.isLoading.collectAsState(initial = false)
-    
+    var selectedTab by remember { mutableStateOf(0) }
+    val tabs = listOf("Всі", "Питання", "Подяки", "Особисті")
+    val currentMessages = when (selectedTab) {
+        0 -> messages
+        1 -> questions
+        2 -> gratitude
+        3 -> personalQuestions
+        else -> messages
+    }
+
     LaunchedEffect(streamUrl) {
         Log.v("StreamChat", "🎬 ChatScreen: LaunchedEffect з URL: '$streamUrl'")
         if (streamUrl.isNotBlank()) {
@@ -55,107 +65,147 @@ fun ChatScreen(
                 Log.v("StreamChat", "✅ Успішно підключено до чату")
             } catch (e: Exception) {
                 Log.e("StreamChat", "❌ Помилка підключення до чату: ${e.message}", e)
-                error = e.message
             }
         } else {
             Log.v("StreamChat", "⚠️ URL є порожнім")
         }
     }
 
-    Scaffold(
-        topBar = {
-            Column {
-                TopAppBar(
-                    title = { 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("Чат трансляції")
-                            Spacer(modifier = Modifier.width(8.dp))
-                            ChatMoodIndicator(chatMood)
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                )
-                ScrollableTabRow(
-                    selectedTabIndex = selectedTab,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    edgePadding = 0.dp
-                ) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { 
-                                selectedTab = index
-                                scope.launch {
-                                    listState.scrollToItem(0)
-                                }
-                            },
-                            text = { 
-                                Text(
-                                    text = when(index) {
-                                        1 -> "$title (${questions.size})"
-                                        2 -> "$title (${gratitude.size})"
-                                        3 -> "$title (${negative.size})"
-                                        4 -> "$title (${personalQuestions.size})"
-                                        else -> title
-                                    }
-                                )
-                            }
-                        )
-                    }
-                }
+    DisposableEffect(Unit) {
+        onDispose {
+            scope.launch {
+                viewModel.stopChat()
             }
         }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            text = "Чат трансляції",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = streamUrl,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            viewModel.stopChat()
+                            onNavigateBack()
+                        }
+                    }) {
+                        Icon(Icons.Default.ArrowBack, "Назад")
+                    }
+                },
+                actions = {
+                    Text(
+                        text = when {
+                            chatMood >= 0.7 -> "😊"
+                            chatMood >= 0.4 -> "😐"
+                            else -> "😔"
+                        },
+                        fontSize = 24.sp
+                    )
+                }
+            )
+        }
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when {
-                isLoading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-                error != null -> {
-                    ErrorMessage(
-                        error = error!!,
-                        streamUrl = streamUrl,
-                        onRetry = {
-                            scope.launch {
-                                error = null
-                                try {
-                                    viewModel.connectToChat(streamUrl.trim())
-                                } catch (e: Exception) {
-                                    error = e.message
-                                }
+            TabRow(
+                selectedTabIndex = selectedTab,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(title)
+                                Spacer(Modifier.width(4.dp))
+                                Text(
+                                    text = when (index) {
+                                        0 -> "${messages.size}"
+                                        1 -> "${questions.size}"
+                                        2 -> "${gratitude.size}"
+                                        3 -> "${personalQuestions.size}"
+                                        else -> "0"
+                                    },
+                                    style = MaterialTheme.typography.labelSmall
+                                )
                             }
                         }
                     )
                 }
-                else -> {
-                    val messages = when (selectedTab) {
-                        0 -> allMessages
-                        1 -> questions
-                        2 -> gratitude
-                        3 -> negative
-                        4 -> personalQuestions
-                        else -> emptyList()
-                    }
-                    ChatMessagesList(
-                        messages = messages,
-                        listState = listState
+            }
+            
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
+
+                if (error != null) {
+                    Text(
+                        text = error ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(currentMessages) { message ->
+                        MessageItem(message = message)
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun MessageItem(message: ChatMessage) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = message.authorName,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = message.content,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

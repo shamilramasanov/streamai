@@ -150,6 +150,18 @@ class ChatViewModel @Inject constructor(
         return content.contains(Regex("поганий|жахливо|жах|погано|негатив|зле|бридко", RegexOption.IGNORE_CASE))
     }
     
+    fun stopChat() {
+        viewModelScope.launch {
+            try {
+                youTubeApiService.disconnectFromLiveChat()
+                _isLoading.value = false
+                _error.value = null
+            } catch (e: Exception) {
+                Log.e("StreamChat", "❌ Помилка при відключенні від чату: ${e.message}", e)
+            }
+        }
+    }
+    
     override fun onCleared() {
         super.onCleared()
         viewModelScope.launch {
