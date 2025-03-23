@@ -1,22 +1,46 @@
 [
     {
-        "merged": "com.streamchat.app-debug-55:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.streamchat.app-main-57:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_disconnect.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_disconnect.xml"
     },
     {
-        "merged": "com.streamchat.app-debug-55:/xml_backup_rules.xml.flat",
-        "source": "com.streamchat.app-main-57:/xml/backup_rules.xml"
+        "merged": "com.streamchat.app-debug-57:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.streamchat.app-main-59:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "com.streamchat.app-debug-55:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.streamchat.app-main-57:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.streamchat.app-debug-57:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.streamchat.app-main-59:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "com.streamchat.app-debug-55:/drawable_ic_stream.xml.flat",
-        "source": "com.streamchat.app-main-57:/drawable/ic_stream.xml"
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_youtube.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_youtube.xml"
     },
     {
-        "merged": "com.streamchat.app-debug-55:/xml_data_extraction_rules.xml.flat",
-        "source": "com.streamchat.app-main-57:/xml/data_extraction_rules.xml"
+        "merged": "com.streamchat.app-debug-57:/xml_data_extraction_rules.xml.flat",
+        "source": "com.streamchat.app-main-59:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_tiktok.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_tiktok.xml"
+    },
+    {
+        "merged": "com.streamchat.app-debug-57:/xml_backup_rules.xml.flat",
+        "source": "com.streamchat.app-main-59:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_stream.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_stream.xml"
+    },
+    {
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_translate_off.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_translate_off.xml"
+    },
+    {
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_translate.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_translate.xml"
+    },
+    {
+        "merged": "com.streamchat.app-debug-57:/drawable_ic_error.xml.flat",
+        "source": "com.streamchat.app-main-59:/drawable/ic_error.xml"
     }
 ]

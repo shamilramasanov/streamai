@@ -81,7 +81,13 @@ drawable ic_call_answer_video
 drawable ic_call_answer_video_low
 drawable ic_call_decline
 drawable ic_call_decline_low
+drawable ic_disconnect
+drawable ic_error
 drawable ic_stream
+drawable ic_tiktok
+drawable ic_translate
+drawable ic_translate_off
+drawable ic_youtube
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -209,6 +215,7 @@ string call_notification_ongoing_text
 string call_notification_screening_text
 string close_drawer
 string close_sheet
+string deepl_api_key
 string default_error_message
 string default_popup_window_title
 string dropdown_menu

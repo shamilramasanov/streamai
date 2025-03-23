@@ -1,9 +1,14 @@
 package com.streamchat;
 
 import com.streamchat.di.AppModule;
+import com.streamchat.di.NetworkModule;
 import com.streamchat.di.RepositoryModule;
+import com.streamchat.di.TikTokModule;
+import com.streamchat.di.TranslationModule;
+import com.streamchat.di.WebSocketModule;
 import com.streamchat.presentation.viewmodels.ChatViewModel_HiltModules;
 import com.streamchat.presentation.viewmodels.StreamInputViewModel_HiltModules;
+import com.streamchat.ui.screens.home.HomeViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -131,9 +136,13 @@ public final class StreamChatApp_HiltComponents {
           AppModule.class,
           ApplicationContextModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          NetworkModule.class,
           RepositoryModule.class,
           ActivityRetainedCBuilderModule.class,
-          ServiceCBuilderModule.class
+          ServiceCBuilderModule.class,
+          TikTokModule.class,
+          TranslationModule.class,
+          WebSocketModule.class
       }
   )
   @Singleton
@@ -159,6 +168,7 @@ public final class StreamChatApp_HiltComponents {
           ChatViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
+          HomeViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
           StreamInputViewModel_HiltModules.KeyModule.class
@@ -199,6 +209,7 @@ public final class StreamChatApp_HiltComponents {
       modules = {
           ChatViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          HomeViewModel_HiltModules.BindsModule.class,
           StreamInputViewModel_HiltModules.BindsModule.class
       }
   )

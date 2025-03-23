@@ -20,11 +20,17 @@ import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_compo
 import hilt_aggregated_deps._com_streamchat_MainActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_streamchat_StreamChatApp_GeneratedInjector;
 import hilt_aggregated_deps._com_streamchat_di_AppModule;
+import hilt_aggregated_deps._com_streamchat_di_NetworkModule;
 import hilt_aggregated_deps._com_streamchat_di_RepositoryModule;
+import hilt_aggregated_deps._com_streamchat_di_TikTokModule;
+import hilt_aggregated_deps._com_streamchat_di_TranslationModule;
+import hilt_aggregated_deps._com_streamchat_di_WebSocketModule;
 import hilt_aggregated_deps._com_streamchat_presentation_viewmodels_ChatViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_streamchat_presentation_viewmodels_ChatViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_streamchat_presentation_viewmodels_StreamInputViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_streamchat_presentation_viewmodels_StreamInputViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_streamchat_ui_screens_home_HomeViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_streamchat_ui_screens_home_HomeViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint;
 import hilt_aggregated_deps._dagger_hilt_android_flags_HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule;
 import hilt_aggregated_deps._dagger_hilt_android_internal_lifecycle_DefaultViewModelFactories_ActivityEntryPoint;
@@ -68,11 +74,17 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_streamchat_MainActivity_GeneratedInjector.class,
         _com_streamchat_StreamChatApp_GeneratedInjector.class,
         _com_streamchat_di_AppModule.class,
+        _com_streamchat_di_NetworkModule.class,
         _com_streamchat_di_RepositoryModule.class,
+        _com_streamchat_di_TikTokModule.class,
+        _com_streamchat_di_TranslationModule.class,
+        _com_streamchat_di_WebSocketModule.class,
         _com_streamchat_presentation_viewmodels_ChatViewModel_HiltModules_BindsModule.class,
         _com_streamchat_presentation_viewmodels_ChatViewModel_HiltModules_KeyModule.class,
         _com_streamchat_presentation_viewmodels_StreamInputViewModel_HiltModules_BindsModule.class,
         _com_streamchat_presentation_viewmodels_StreamInputViewModel_HiltModules_KeyModule.class,
+        _com_streamchat_ui_screens_home_HomeViewModel_HiltModules_BindsModule.class,
+        _com_streamchat_ui_screens_home_HomeViewModel_HiltModules_KeyModule.class,
         _dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint.class,
         _dagger_hilt_android_flags_HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
         _dagger_hilt_android_internal_lifecycle_DefaultViewModelFactories_ActivityEntryPoint.class,

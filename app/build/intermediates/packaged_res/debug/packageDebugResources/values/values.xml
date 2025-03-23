@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">StreamChat</string>
+    <string name="deepl_api_key">272f95bf-2c67-4b80-838c-b4246a480aa7:fx</string>
     <style name="Theme.StreamChat" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>

@@ -10,10 +10,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.streamchat.data.remote.YouTubeApiService;
 import com.streamchat.di.AppModule_ProvideYouTubeApiServiceFactory;
+import com.streamchat.di.NetworkModule_ProvideOkHttpClientFactory;
+import com.streamchat.di.TranslationModule_Companion_ProvideTranslationCacheFactory;
+import com.streamchat.platforms.core.StreamPlatformFactory;
+import com.streamchat.platforms.tiktok.TikTokPlatform;
+import com.streamchat.platforms.youtube.YouTubePlatform;
+import com.streamchat.preferences.PreferencesManager;
 import com.streamchat.presentation.viewmodels.ChatViewModel;
 import com.streamchat.presentation.viewmodels.ChatViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.streamchat.presentation.viewmodels.StreamInputViewModel;
 import com.streamchat.presentation.viewmodels.StreamInputViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.streamchat.translation.DeepLTranslationService;
+import com.streamchat.translation.TranslationCache;
+import com.streamchat.ui.screens.home.HomeViewModel;
+import com.streamchat.ui.screens.home.HomeViewModel_HiltModules_KeyModule_ProvideFactory;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -28,6 +38,7 @@ import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories_Internal
 import dagger.hilt.android.internal.managers.ActivityRetainedComponentManager_LifecycleModule_ProvideActivityRetainedLifecycleFactory;
 import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.android.internal.modules.ApplicationContextModule;
+import dagger.hilt.android.internal.modules.ApplicationContextModule_ProvideContextFactory;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
 import dagger.internal.Preconditions;
@@ -35,6 +46,7 @@ import dagger.internal.Provider;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
+import okhttp3.OkHttpClient;
 
 @DaggerGenerated
 @Generated(
@@ -55,25 +67,20 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
     return new Builder();
   }
 
-  public static StreamChatApp_HiltComponents.SingletonC create() {
-    return new Builder().build();
-  }
-
   public static final class Builder {
+    private ApplicationContextModule applicationContextModule;
+
     private Builder() {
     }
 
-    /**
-     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
-     */
-    @Deprecated
     public Builder applicationContextModule(ApplicationContextModule applicationContextModule) {
-      Preconditions.checkNotNull(applicationContextModule);
+      this.applicationContextModule = Preconditions.checkNotNull(applicationContextModule);
       return this;
     }
 
     public StreamChatApp_HiltComponents.SingletonC build() {
-      return new SingletonCImpl();
+      Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
+      return new SingletonCImpl(applicationContextModule);
     }
   }
 
@@ -372,7 +379,7 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
 
     @Override
     public Set<String> getViewModelKeys() {
-      return ImmutableSet.<String>of(ChatViewModel_HiltModules_KeyModule_ProvideFactory.provide(), StreamInputViewModel_HiltModules_KeyModule_ProvideFactory.provide());
+      return ImmutableSet.<String>of(ChatViewModel_HiltModules_KeyModule_ProvideFactory.provide(), HomeViewModel_HiltModules_KeyModule_ProvideFactory.provide(), StreamInputViewModel_HiltModules_KeyModule_ProvideFactory.provide());
     }
 
     @Override
@@ -400,6 +407,8 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
 
     private Provider<ChatViewModel> chatViewModelProvider;
 
+    private Provider<HomeViewModel> homeViewModelProvider;
+
     private Provider<StreamInputViewModel> streamInputViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
@@ -416,12 +425,13 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.chatViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.streamInputViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.streamInputViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>of("com.streamchat.presentation.viewmodels.ChatViewModel", ((Provider) chatViewModelProvider), "com.streamchat.presentation.viewmodels.StreamInputViewModel", ((Provider) streamInputViewModelProvider));
+      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>of("com.streamchat.presentation.viewmodels.ChatViewModel", ((Provider) chatViewModelProvider), "com.streamchat.ui.screens.home.HomeViewModel", ((Provider) homeViewModelProvider), "com.streamchat.presentation.viewmodels.StreamInputViewModel", ((Provider) streamInputViewModelProvider));
     }
 
     @Override
@@ -453,7 +463,10 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
           case 0: // com.streamchat.presentation.viewmodels.ChatViewModel 
           return (T) new ChatViewModel(singletonCImpl.provideYouTubeApiServiceProvider.get());
 
-          case 1: // com.streamchat.presentation.viewmodels.StreamInputViewModel 
+          case 1: // com.streamchat.ui.screens.home.HomeViewModel 
+          return (T) new HomeViewModel(singletonCImpl.streamPlatformFactoryProvider.get(), singletonCImpl.deepLTranslationServiceProvider.get(), singletonCImpl.preferencesManagerProvider.get());
+
+          case 2: // com.streamchat.presentation.viewmodels.StreamInputViewModel 
           return (T) new StreamInputViewModel();
 
           default: throw new AssertionError(id);
@@ -532,19 +545,39 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
   }
 
   private static final class SingletonCImpl extends StreamChatApp_HiltComponents.SingletonC {
+    private final ApplicationContextModule applicationContextModule;
+
     private final SingletonCImpl singletonCImpl = this;
 
     private Provider<YouTubeApiService> provideYouTubeApiServiceProvider;
 
-    private SingletonCImpl() {
+    private Provider<OkHttpClient> provideOkHttpClientProvider;
 
-      initialize();
+    private Provider<TikTokPlatform> tikTokPlatformProvider;
+
+    private Provider<StreamPlatformFactory> streamPlatformFactoryProvider;
+
+    private Provider<TranslationCache> provideTranslationCacheProvider;
+
+    private Provider<DeepLTranslationService> deepLTranslationServiceProvider;
+
+    private Provider<PreferencesManager> preferencesManagerProvider;
+
+    private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
+      this.applicationContextModule = applicationContextModuleParam;
+      initialize(applicationContextModuleParam);
 
     }
 
     @SuppressWarnings("unchecked")
-    private void initialize() {
+    private void initialize(final ApplicationContextModule applicationContextModuleParam) {
       this.provideYouTubeApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<YouTubeApiService>(singletonCImpl, 0));
+      this.provideOkHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<OkHttpClient>(singletonCImpl, 3));
+      this.tikTokPlatformProvider = DoubleCheck.provider(new SwitchingProvider<TikTokPlatform>(singletonCImpl, 2));
+      this.streamPlatformFactoryProvider = DoubleCheck.provider(new SwitchingProvider<StreamPlatformFactory>(singletonCImpl, 1));
+      this.provideTranslationCacheProvider = DoubleCheck.provider(new SwitchingProvider<TranslationCache>(singletonCImpl, 5));
+      this.deepLTranslationServiceProvider = DoubleCheck.provider(new SwitchingProvider<DeepLTranslationService>(singletonCImpl, 4));
+      this.preferencesManagerProvider = DoubleCheck.provider(new SwitchingProvider<PreferencesManager>(singletonCImpl, 6));
     }
 
     @Override
@@ -582,6 +615,24 @@ public final class DaggerStreamChatApp_HiltComponents_SingletonC {
         switch (id) {
           case 0: // com.streamchat.data.remote.YouTubeApiService 
           return (T) AppModule_ProvideYouTubeApiServiceFactory.provideYouTubeApiService();
+
+          case 1: // com.streamchat.platforms.core.StreamPlatformFactory 
+          return (T) new StreamPlatformFactory(new YouTubePlatform(), singletonCImpl.tikTokPlatformProvider.get());
+
+          case 2: // com.streamchat.platforms.tiktok.TikTokPlatform 
+          return (T) new TikTokPlatform(singletonCImpl.provideOkHttpClientProvider.get());
+
+          case 3: // okhttp3.OkHttpClient 
+          return (T) NetworkModule_ProvideOkHttpClientFactory.provideOkHttpClient();
+
+          case 4: // com.streamchat.translation.DeepLTranslationService 
+          return (T) new DeepLTranslationService(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideOkHttpClientProvider.get(), singletonCImpl.provideTranslationCacheProvider.get());
+
+          case 5: // com.streamchat.translation.TranslationCache 
+          return (T) TranslationModule_Companion_ProvideTranslationCacheFactory.provideTranslationCache();
+
+          case 6: // com.streamchat.preferences.PreferencesManager 
+          return (T) new PreferencesManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

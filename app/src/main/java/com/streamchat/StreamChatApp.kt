@@ -3,6 +3,7 @@ package com.streamchat
 import android.app.Application
 import android.util.Log
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 @HiltAndroidApp
 class StreamChatApp : Application() {
@@ -29,6 +30,11 @@ class StreamChatApp : Application() {
             println("❌ Помилка ініціалізації додатку: ${e.message}")
             Log.e("StreamChat", "❌ Помилка ініціалізації додатку: ${e.message}")
             Log.e("StreamChat", "❌ Стек помилки: ${e.stackTraceToString()}")
+        }
+
+        // Ініціалізуємо Timber тільки в Debug режимі
+        if (packageManager.getApplicationInfo(packageName, 0).flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+            Timber.plant(Timber.DebugTree())
         }
     }
 } 
